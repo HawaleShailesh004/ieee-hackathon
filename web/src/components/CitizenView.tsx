@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { MyReports } from './MyReports';
 import { api, contributorId, type Config, type QItem, type Questionnaire, type Site, type SubmitResult, type Suggestion, type Coding } from '../api';
 
 type Answers = Record<string, { coding?: Coding; number?: number }>;
@@ -67,6 +68,7 @@ export function CitizenView({ config, onSubmitted }: { config: Config | null; on
   const [busy, setBusy] = useState<'suggest' | 'send' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const [mode, setMode] = useState<'new' | 'mine'>('new');
 
   useEffect(() => {
     Promise.all([api.questionnaire(), api.sites()])
@@ -119,10 +121,27 @@ export function CitizenView({ config, onSubmitted }: { config: Config | null; on
     setAnswers({}); setNote(''); setSuggestions(null); setAccepted([]); setResult(null); setError(null);
   }
 
+  const modes = (
+    <div className="citizen-modes" role="group" aria-label="Citizen views">
+      <button type="button" className="citizen-mode" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>New report</button>
+      <button type="button" className="citizen-mode" aria-pressed={mode === 'mine'} onClick={() => setMode('mine')}>Your reports</button>
+    </div>
+  );
+
+  if (mode === 'mine') {
+    return (
+      <section className="citizen">
+        {modes}
+        <MyReports onNewReport={() => { reset(); setMode('new'); }} />
+      </section>
+    );
+  }
+
   if (result) {
     const flagged = result.checks.filter((c) => c.flag);
     return (
       <section className="citizen receipt" aria-live="polite">
+        {modes}
         <h2>Report sent</h2>
         <p className="lede">
           Your {result.observations.length} answers about {site?.name ?? 'the stream'} are now observations the city can review.
@@ -145,13 +164,18 @@ export function CitizenView({ config, onSubmitted }: { config: Config | null; on
             : 'Nothing unusual was flagged. A reviewer will still look at every answer.'}
           {' '}Checked against the OneAquaHealth FHIR profiles: {result.validated} records valid.
         </p>
-        <button type="button" className="button" onClick={reset}>Report another visit</button>
+        <p>You can come back to <strong>Your reports</strong> to see what the city decides.</p>
+        <div className="receipt-actions">
+          <button type="button" className="button" onClick={() => setMode('mine')}>See your reports</button>
+          <button type="button" className="button secondary" onClick={reset}>Report another visit</button>
+        </div>
       </section>
     );
   }
 
   return (
     <section className="citizen">
+      {modes}
       <header className="citizen-head">
         <h2>Report what you see at the stream</h2>
         <p className="lede">Describe what is there, not what you think caused it. Skip anything you are unsure about.</p>

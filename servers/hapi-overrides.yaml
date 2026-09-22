@@ -13,6 +13,9 @@ hapi:
     # UUID ids so records can move between servers with the same id (exchange uses PUT).
     server_id_strategy: UUID
     client_id_strategy: ANY
+    # A visit's history names all its answers, but only reviewed answers are exchanged. The receiving server
+    # must accept history that mentions answers it has not received (yet), rather than reject the exchange.
+    enforce_referential_integrity_on_write: false
     # Never answer a search from cached results: review history must always be current.
     reuse_cached_search_results_millis: 0
     # The OAH IG and the citizen-lane IG are both status=draft; install their profiles anyway.

@@ -140,6 +140,20 @@ export async function review(city, observationRef, { decision, reason, reviewer,
   return { observation: observationRef, state: decision, provenance: `Provenance/${prov.id}` };
 }
 
+/**
+ * Every Provenance step for these observations and the reports they were extracted from.
+ * Also searches by source report: a receiving server may hold an extraction step from before one of its
+ * observations arrived, and HAPI does not index a reference to a resource that did not exist yet (nor
+ * re-index it when the unchanged step is sent again), so a search by target alone would miss it.
+ */
+export async function historyOf(server, observationRefs, reportRefs) {
+  const [byTarget, bySource] = await Promise.all([
+    server.search('Provenance', { target: [...observationRefs, ...reportRefs].join(',') }),
+    reportRefs.length ? server.search('Provenance', { entity: reportRefs.join(',') }) : [],
+  ]);
+  return [...new Map([...byTarget, ...bySource].map((p) => [p.id, p])).values()];
+}
+
 /** Everything that must move with the citizen observations: themselves, their sources and all history. */
 async function collectEvidence(server, observationRefs) {
   const observations = await Promise.all(observationRefs.map((ref) => server.read(...ref.split('/'))));
@@ -147,7 +161,7 @@ async function collectEvidence(server, observationRefs) {
   const locationRefs = [...new Set(observations.map((o) => o.subject.reference))];
   const [responses, provenance] = await Promise.all([
     Promise.all(qrRefs.map((ref) => server.read(...ref.split('/')))),
-    server.search('Provenance', { target: [...observationRefs, ...qrRefs].join(',') }),
+    historyOf(server, observationRefs, qrRefs),
   ]);
   // Lab records an automated check cited as evidence travel too, so the receiver can see what was compared.
   const cited = [...new Set(provenance.flatMap((p) => (p.entity ?? []).map((e) => e.what.reference)))]

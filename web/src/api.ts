@@ -110,3 +110,13 @@ export interface HealthContext {
   }[];
 }
 export const healthContext = () => call<HealthContext>('/health/context');
+
+export interface MyReport {
+  report: string; site: string; siteName: string | null; sent: string;
+  answers: {
+    id: string; question: string; value: string | null; reviewState: ReviewState; flagged: boolean;
+    reviewReason: string | null; reviewedAt: string | null; sharedWithHealth: boolean;
+  }[];
+}
+export const myReports = (contributor: string) =>
+  call<MyReport[]>(`/my-reports?contributor=${encodeURIComponent(contributor)}`);

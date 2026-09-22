@@ -91,11 +91,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (prefers-color-scheme: dark) { .masthead { background: #06161a; } }
 
 .views { display: grid; grid-template-columns: repeat(3, minmax(0, max-content)); gap: 0.25rem; margin-top: 1rem; }
-@media (max-width: 560px) {
-  .views { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.15rem; }
-  .view-tab { padding: 0.5rem 0.55rem 0.6rem; white-space: normal; overflow-wrap: anywhere; }
-  .view-label { font-size: var(--step--1); line-height: 1.25; }
-}
 .view-tab {
   display: flex; flex-direction: column;
   padding: 0.55rem 1rem 0.7rem;
@@ -108,6 +103,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .view-tab.is-current { background: var(--mist); color: var(--ink); opacity: 1; }
 .view-who { font-size: var(--step--1); opacity: 0.75; }
 .view-label { font-weight: 800; }
+/* After the base tab rules, so it wins: at phone width the three tabs share the row and their labels wrap. */
+@media (max-width: 560px) {
+  .views { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.15rem; }
+  .view-tab { padding: 0.5rem 0.55rem 0.6rem; white-space: normal; overflow-wrap: anywhere; }
+  .view-label { font-size: var(--step--1); line-height: 1.25; }
+}
 
 main { flex: 1; padding: clamp(1rem, 4vw, 2.5rem); }
 .colophon {
@@ -346,3 +347,23 @@ textarea { resize: vertical; }
 .context th { text-align: left; font-weight: 600; color: var(--ink-soft); padding: 0.3rem 0; border-bottom: 1px solid var(--rule); }
 .context td { padding: 0.35rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .context td:last-child, .context th:last-child { text-align: right; padding-left: 1rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ---------- Citizen: new report / your reports ---------- */
+.citizen-modes { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--rule); }
+.citizen-mode {
+  padding: 0.5rem 0.9rem; margin-bottom: -2px; border: 0; border-bottom: 3px solid transparent;
+  background: none; font-weight: 800; color: var(--ink-soft); cursor: pointer;
+}
+.citizen-mode[aria-pressed='true'] { color: var(--ink); border-bottom-color: var(--citizen); }
+.visit { margin-top: 1.5rem; }
+.visit h3 { margin: 0; font-size: var(--step-1); }
+.visit-answers { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+.visit-answer { padding: 0.7rem 0 0.7rem 0.9rem; border-left: 4px solid var(--waiting); margin-bottom: 0.5rem; background: var(--surface); border-radius: 0 var(--radius-panel) var(--radius-panel) 0; padding-right: 0.9rem; }
+.visit-answer.tone-accepted { border-left-color: var(--accepted); }
+.visit-answer.tone-follow-up { border-left-color: var(--follow-up); }
+.visit-answer.tone-rejected { border-left-color: var(--rejected); }
+.visit-q { font-weight: 800; margin: 0; }
+.visit-outcome { margin: 0.2rem 0 0; }
+.visit-reason { margin: 0.2rem 0 0; font-style: italic; color: var(--ink-soft); }
+.visit-shared { margin: 0.2rem 0 0; font-size: var(--step--1); color: var(--water); font-weight: 600; }
+.receipt-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }

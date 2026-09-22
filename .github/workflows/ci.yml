@@ -70,6 +70,9 @@ jobs:
       - name: Submit, check, review, exchange and verify history on the receiving server
         run: npm ci && node src/exchange-spike.mjs
         working-directory: lane
+      - name: Same flow through the HTTP API, including partial exchange and the contributor's own view
+        run: node src/api-smoke.mjs
+        working-directory: lane
       - name: Web app is served
         run: curl -sSf http://localhost:8090/ | grep -q "Streams to Systems"
       - name: Server logs on failure

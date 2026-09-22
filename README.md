@@ -22,13 +22,15 @@ such as the Almyros stream in Crete, but no way to record a citizen observation 
    person can see: foam, bank vegetation, water plants, invasive species, and temperature if they have a
    thermometer. Optionally, an AI model suggests answers from a free-text note. The citizen confirms each
    suggestion, and that confirmation is recorded. No name or account is needed; contributors are
-   pseudonymous `urn:uuid` identifiers.
+   pseudonymous `urn:uuid` identifiers. Under **Your reports**, the citizen sees what happened to each answer:
+   waiting, accepted, rejected or follow-up requested, the city's note, and whether it reached the health
+   authority.
 2. **Automatic check.** Answers become OAH-profiled Observations. Each one is validated with `$validate` on a
    real FHIR server before it is stored. Plausibility rules compare it with the site's lab history (for
    example, 31.5 °C against Almyros readings of 16.1 and 16.2 °C). These rules flag reports for review;
    they are not an ecological assessment.
-3. **City reviewer.** Sees each report next to the lab record for the same indicator, then accepts it,
-   rejects it or requests follow-up, with a required reason.
+3. **City reviewer.** Works through a queue with flagged reports first. Sees each report next to the lab
+   record for the same indicator, then accepts it, rejects it or requests follow-up, with a required reason.
 4. **Exchange and verification.** Reviewed reports move from the city FHIR server to a separate
    health-authority FHIR server with their full history. The receiving side checks each report against the
    city's copy: same answer, same review decision, still marked as citizen data, same pseudonymous
@@ -90,7 +92,8 @@ bash scripts/demo-reset.sh                       # start both FHIR servers and s
 
 **Optional AI suggestions:** copy `.env.example` to `.env` and set `OPENAI_API_KEY` (an OpenAI key, or an
 OpenRouter key with `OPENAI_BASE_URL`) and `OPENAI_MODEL`. Without a key, the form works and the
-suggestion button is hidden.
+suggestion button is hidden. Suggestions are limited per client (`SUGGEST_LIMIT_PER_HOUR`, default 10), so a
+shared demo can't run up the bill.
 
 ## Proof that it conforms
 
@@ -101,7 +104,9 @@ CI (`.github/workflows/ci.yml`) runs on every push:
   profiles. Four negative controls must each be rejected: an identifiable performer, a missing citizen-science
   category, `status = preliminary`, and an unknown review state.
 - **End to end:** starts the Docker stack, then submits, checks, reviews and exchanges one assessment between
-  the two FHIR servers and verifies its history on the receiving side (`lane/src/exchange-spike.mjs`).
+  the two FHIR servers and verifies its history on the receiving side (`lane/src/exchange-spike.mjs`). The
+  same flow then runs through the HTTP API (`lane/src/api-smoke.mjs`): queue order, sending part of a visit
+  and the rest later, and the contributor's view of the outcome.
 - **Unit tests** for extraction (`lane/test`) and a type-checked web build.
 
 To run the validator locally: `node lane/src/spike.mjs && bash scripts/validate.sh && python scripts/summarize-validation.py --expect valid`.
@@ -127,3 +132,7 @@ To run the validator locally: `node lane/src/spike.mjs && bash scripts/validate.
 - The validator runs with `-tx n/a`: codes in the OAH and citizen-lane code systems are checked; SNOMED CT and
   UCUM codes are not.
 - Lab data shown is the OAH IG's published example data.
+- There are no logins. The reviewer is a fixed demo identity, and a contributor's reports are tied to an
+  anonymous code in their browser.
+- Reviewed answers can be sent before the rest of their visit. The receiving server therefore stores history
+  that names answers it hasn't received yet (`enforce_referential_integrity_on_write: false`).

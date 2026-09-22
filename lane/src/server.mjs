@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { fhirClient, FhirError } from './fhir.mjs';
 import {
   submitAssessment, automatedCheck, review, exchange, verifyExchange,
-  isCitizen, reviewState, chronological, ValidationFailed, REVIEW_DECISIONS,
+  isCitizen, reviewState, chronological, historyOf, ValidationFailed, REVIEW_DECISIONS,
 } from './workflow.mjs';
 import { suggestAnswers, suggestConfig } from './suggest.mjs';
 
@@ -23,6 +23,9 @@ const RECEIVER = 'Regional public health FHIR server (demo)';
 const UUID = /^urn:uuid:[0-9a-f-]{36}$/;
 const SNOMED_RIVER = '420531007';
 const HEALTH_MEASURE = 'http://hl7.eu/fhir/ig/oah/StructureDefinition/observation-health-measure-oah';
+const CITIZEN_CATEGORY = 'https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/oah-data-source|citizen-science';
+// "Suggest answers from my note" calls a paid AI API; cap it per client so a shared demo can't run up the bill.
+const SUGGEST_LIMIT_PER_HOUR = Number(process.env.SUGGEST_LIMIT_PER_HOUR ?? 10);
 const now = () => new Date().toISOString();
 
 const app = Fastify({ logger: { level: 'warn' } });
@@ -60,11 +63,11 @@ function valueText(obs) {
 }
 
 async function citizenObservations(server, params) {
-  const all = await server.search('Observation', { category: 'https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/oah-data-source|citizen-science', ...params });
+  const all = await server.search('Observation', { category: CITIZEN_CATEGORY, ...params });
   if (!all.length) return [];
   const sourcesOf = (o) => [`Observation/${o.id}`, ...(o.derivedFrom ?? []).map((d) => d.reference)];
-  const targets = [...new Set(all.flatMap(sourcesOf))];
-  const provs = await server.search('Provenance', { target: targets.join(',') });
+  const reports = [...new Set(all.flatMap((o) => (o.derivedFrom ?? []).map((d) => d.reference)))];
+  const provs = await historyOf(server, all.map((o) => `Observation/${o.id}`), reports);
   // Lab records a check compared against, labelled by value and month (they travel with an exchange).
   const cited = [...new Set(provs.flatMap((p) => (p.entity ?? []).map((e) => e.what.reference)))]
     .filter((r) => r.startsWith('Observation/'));
@@ -77,6 +80,7 @@ async function citizenObservations(server, params) {
   }
   return all.map((o) => ({
     id: o.id,
+    report: o.derivedFrom?.[0]?.reference ?? null,
     site: o.subject.reference,
     siteName: o.subject.display ?? null,
     code: o.code.coding[0].code,
@@ -159,10 +163,24 @@ app.get('/api/sites/:id', async (req) => {
   };
 });
 
+const suggestCalls = new Map(); // client ip -> timestamps of calls in the last hour
+function overSuggestLimit(ip, at = Date.now()) {
+  const recent = (suggestCalls.get(ip) ?? []).filter((t) => at - t < 3_600_000);
+  const over = recent.length >= SUGGEST_LIMIT_PER_HOUR;
+  if (!over) recent.push(at);
+  suggestCalls.set(ip, recent);
+  return over;
+}
+
 app.post('/api/suggest', {
   schema: { body: { type: 'object', required: ['note'], properties: { note: { type: 'string', minLength: 3, maxLength: 2000 } } } },
 }, async (req, reply) => {
   if (!ai.apiKey) return reply.code(503).send({ error: 'Answer suggestions are turned off on this server.' });
+  if (overSuggestLimit(req.ip)) {
+    return reply.code(429).send({
+      error: `Suggestions are limited to ${SUGGEST_LIMIT_PER_HOUR} an hour. Answer the questions directly, or try again later.`,
+    });
+  }
   return suggestAnswers({ questionnaire, note: req.body.note, config: ai });
 });
 
@@ -204,7 +222,46 @@ app.post('/api/assessments', {
   return { observations: submitted.observations, checks, validated: submitted.validation.length };
 });
 
-app.get('/api/review-queue', async () => citizenObservations(city));
+// Waiting reports an automated check flagged come first, then other waiting reports, then reviewed ones.
+app.get('/api/review-queue', async () => {
+  const priority = (o) => {
+    if (REVIEW_DECISIONS.includes(o.reviewState)) return 2;
+    const check = o.history.filter((h) => h.activity === 'automated-check').at(-1);
+    return check?.reason?.startsWith('FLAGGED') ? 0 : 1;
+  };
+  return (await citizenObservations(city)).sort((a, b) => priority(a) - priority(b));
+});
+
+// A contributor's own reports, grouped by visit, with what happened to each answer. The pseudonymous id is
+// the only key: it never leaves the contributor's browser except to look up their own reports.
+app.get('/api/my-reports', {
+  schema: { querystring: { type: 'object', required: ['contributor'], properties: { contributor: { type: 'string', pattern: UUID.source } } } },
+}, async (req) => {
+  const [mine, shared] = await Promise.all([
+    citizenObservations(city).then((all) => all.filter((o) => o.contributor === req.query.contributor)),
+    health.search('Observation', { category: CITIZEN_CATEGORY, _elements: 'id' }).then((r) => new Set(r.map((o) => o.id))),
+  ]);
+  const reports = new Map();
+  for (const o of mine) {
+    const key = o.report ?? o.id;
+    const r = reports.get(key) ?? { report: key, site: o.site, siteName: o.siteName, sent: o.effective, answers: [] };
+    reports.set(key, r);
+    const reviewStep = o.history.filter((h) => h.activity === 'expert-review').at(-1);
+    const check = o.history.filter((h) => h.activity === 'automated-check').at(-1);
+    r.answers.push({
+      id: o.id,
+      question: o.question,
+      value: o.value,
+      reviewState: o.reviewState,
+      flagged: Boolean(check?.reason?.startsWith('FLAGGED')),
+      // "Needs field follow-up: <reason>" -> "<reason>"
+      reviewReason: reviewStep?.reason?.replace(/^[^:]+:\s*/, '') ?? null,
+      reviewedAt: reviewStep?.recorded ?? null,
+      sharedWithHealth: shared.has(o.id),
+    });
+  }
+  return [...reports.values()].sort((a, b) => Date.parse(b.sent) - Date.parse(a.sent));
+});
 
 app.post('/api/observations/:id/review', {
   schema: {
@@ -228,7 +285,7 @@ app.post('/api/exchange', {
 app.get('/api/health/observations', async () => citizenObservations(health));
 
 app.get('/api/health/verify', async () => {
-  const received = await health.search('Observation', { category: 'https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/oah-data-source|citizen-science', _elements: 'id' });
+  const received = await health.search('Observation', { category: CITIZEN_CATEGORY, _elements: 'id' });
   if (!received.length) return { ok: true, observations: [] };
   return verifyExchange(city, health, received.map((o) => `Observation/${o.id}`));
 });
