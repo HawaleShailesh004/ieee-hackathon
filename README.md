@@ -1,5 +1,7 @@
 # Streams to Systems: a citizen lane for the OneAquaHealth FHIR IG
 
+[![CI](https://github.com/HawaleShailesh004/ieee-hackathon/actions/workflows/ci.yml/badge.svg)](https://github.com/HawaleShailesh004/ieee-hackathon/actions/workflows/ci.yml)
+
 A citizen reports foam and a warm reading at a stream. The report reaches the regional health authority as
 standards-conformant evidence that is clearly marked as a citizen report. It shows how it was checked and who
 reviewed it, and it sits next to 12 years of lab data from the same stream.
