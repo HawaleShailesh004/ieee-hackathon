@@ -1,0 +1,19 @@
+id: oah.citizen-lane
+canonical: https://hawaleshailesh004.github.io/ieee-hackathon
+name: OahCitizenLane
+title: "OneAquaHealth Citizen Lane (hackathon extension to the OAH FHIR IG)"
+description: >-
+  Adds a citizen-science lane to the OneAquaHealth FHIR IG: a stream-assessment
+  Questionnaire, a citizen Observation profile derived from ObservationIndicatorsOah,
+  and a Provenance profile that carries capture and review history through exchange.
+  Not an official OneAquaHealth or HL7 Europe artifact.
+status: draft
+version: 0.1.0
+fhirVersion: 4.0.1
+releaseLabel: ci-build
+publisher:
+  name: OneAquaHealth IEEE Hackathon 2026 entry
+dependencies:
+  hl7.eu.fhir.oah: 0.1.0-ci-build
+  hl7.fhir.uv.sdc: 3.0.0
+FSHOnly: true

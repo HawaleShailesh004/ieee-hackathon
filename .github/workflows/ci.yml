@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  conformance:
+    name: FHIR conformance (HL7 validator)
+    runs-on: ubuntu-latest
+    env:
+      JAVA: java
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Cache FHIR packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.fhir/packages
+          key: fhir-packages-${{ hashFiles('vendor/oah-ig/sushi-config.yaml', 'citizen-lane-ig/sushi-config.yaml') }}
+      - name: Download HL7 validator
+        run: |
+          mkdir -p tools
+          curl -sSfL -o tools/validator_cli.jar \
+            https://github.com/hapifhir/org.hl7.fhir.core/releases/download/6.10.4/validator_cli.jar
+      - name: Build both IGs from source (SUSHI, snapshots, packages)
+        run: bash scripts/build-ig.sh
+      - name: Extract one citizen assessment (valid examples + negative controls)
+        run: node lane/src/spike.mjs
+      - name: Examples must be valid against OAH + citizen-lane profiles
+        run: |
+          VALIDATION_OUT="$PWD/build/validation-valid.json" bash scripts/validate.sh build/spike/[0-9]*.json
+          python3 scripts/summarize-validation.py build/validation-valid.json --expect valid
+      - name: Negative controls must be rejected
+        run: |
+          VALIDATION_OUT="$PWD/build/validation-invalid.json" bash scripts/validate.sh build/spike-negative/*.json
+          python3 scripts/summarize-validation.py build/validation-invalid.json --expect invalid
+
+  app:
+    name: Unit tests and web build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci && npm test
+        working-directory: lane
+      - run: npm ci && npm run build
+        working-directory: web
+
+  e2e:
+    name: End to end on two FHIR servers (docker compose)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Start the whole stack
+        run: docker compose up --build --detach --wait --wait-timeout 600
+      - name: Submit, check, review, exchange and verify history on the receiving server
+        run: npm ci && node src/exchange-spike.mjs
+        working-directory: lane
+      - name: Web app is served
+        run: curl -sSf http://localhost:8090/ | grep -q "Streams to Systems"
+      - name: Server logs on failure
+        if: failure()
+        run: docker compose logs --tail 200

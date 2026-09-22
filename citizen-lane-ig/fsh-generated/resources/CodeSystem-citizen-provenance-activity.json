@@ -1,0 +1,46 @@
+{
+  "resourceType": "CodeSystem",
+  "status": "draft",
+  "content": "complete",
+  "name": "CitizenProvenanceActivityCs",
+  "id": "citizen-provenance-activity",
+  "title": "Citizen observation lifecycle activity",
+  "description": "Steps in the life of a citizen observation, recorded as Provenance.activity.",
+  "version": "0.1.0",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/citizen-provenance-activity",
+  "concept": [
+    {
+      "code": "capture",
+      "display": "Captured",
+      "definition": "Contributor completed the assessment questionnaire."
+    },
+    {
+      "code": "ai-code-suggestion",
+      "display": "AI code suggestion",
+      "definition": "An AI model suggested coded answers from free text; the contributor had to confirm them."
+    },
+    {
+      "code": "extraction",
+      "display": "Extraction",
+      "definition": "QuestionnaireResponse answers were extracted into OAH Observations."
+    },
+    {
+      "code": "automated-check",
+      "display": "Automated check",
+      "definition": "Rule-based plausibility check against site history."
+    },
+    {
+      "code": "expert-review",
+      "display": "Expert review",
+      "definition": "A human reviewer changed the review state."
+    },
+    {
+      "code": "exchange-import",
+      "display": "Exchange import",
+      "definition": "Observation was imported into another system with its history."
+    }
+  ],
+  "caseSensitive": true,
+  "experimental": true,
+  "count": 6
+}

@@ -1,0 +1,18 @@
+{
+  "resourceType": "ValueSet",
+  "status": "draft",
+  "name": "CitizenReviewStateVs",
+  "id": "citizen-review-state-vs",
+  "title": "Citizen observation review state",
+  "description": "All citizen review states.",
+  "version": "0.1.0",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/ValueSet/citizen-review-state-vs",
+  "experimental": true,
+  "compose": {
+    "include": [
+      {
+        "system": "https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/citizen-review-state"
+      }
+    ]
+  }
+}

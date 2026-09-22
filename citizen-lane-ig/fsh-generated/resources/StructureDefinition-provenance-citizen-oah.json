@@ -1,0 +1,61 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "provenance-citizen-oah",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/StructureDefinition/provenance-citizen-oah",
+  "version": "0.1.0",
+  "name": "ProvenanceCitizenOah",
+  "title": "Provenance: citizen observation lifecycle step",
+  "status": "draft",
+  "description": "One step in the life of a citizen observation. The chain of these resources is the observation's evidence history and must survive exchange.",
+  "fhirVersion": "4.0.1",
+  "kind": "resource",
+  "abstract": false,
+  "type": "Provenance",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Provenance",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Provenance.target",
+        "path": "Provenance.target",
+        "mustSupport": true
+      },
+      {
+        "id": "Provenance.reason",
+        "path": "Provenance.reason",
+        "mustSupport": true
+      },
+      {
+        "id": "Provenance.activity",
+        "path": "Provenance.activity",
+        "min": 1,
+        "mustSupport": true,
+        "binding": {
+          "strength": "required",
+          "valueSet": "https://hawaleshailesh004.github.io/ieee-hackathon/ValueSet/citizen-provenance-activity-vs"
+        }
+      },
+      {
+        "id": "Provenance.agent",
+        "path": "Provenance.agent",
+        "mustSupport": true
+      },
+      {
+        "id": "Provenance.agent.type",
+        "path": "Provenance.agent.type",
+        "min": 1,
+        "mustSupport": true
+      },
+      {
+        "id": "Provenance.agent.who.identifier",
+        "path": "Provenance.agent.who.identifier",
+        "mustSupport": true
+      },
+      {
+        "id": "Provenance.entity",
+        "path": "Provenance.entity",
+        "mustSupport": true
+      }
+    ]
+  }
+}

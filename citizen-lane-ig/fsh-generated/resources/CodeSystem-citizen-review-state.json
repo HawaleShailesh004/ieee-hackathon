@@ -1,0 +1,41 @@
+{
+  "resourceType": "CodeSystem",
+  "status": "draft",
+  "content": "complete",
+  "name": "CitizenReviewStateCs",
+  "id": "citizen-review-state",
+  "title": "Citizen observation review state",
+  "description": "Proposed workflow states for a citizen observation. These describe where the observation is in the review workflow. They are NOT validated confidence levels.",
+  "version": "0.1.0",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/citizen-review-state",
+  "concept": [
+    {
+      "code": "unreviewed",
+      "display": "Unreviewed",
+      "definition": "Submitted by the contributor; nobody has checked it yet."
+    },
+    {
+      "code": "auto-checked",
+      "display": "Automatically checked",
+      "definition": "Passed or failed automated plausibility checks; no human review yet."
+    },
+    {
+      "code": "accepted",
+      "display": "Accepted by reviewer",
+      "definition": "A reviewer judged the observation usable for follow-up."
+    },
+    {
+      "code": "rejected",
+      "display": "Rejected by reviewer",
+      "definition": "A reviewer judged the observation unusable. Kept for audit."
+    },
+    {
+      "code": "needs-follow-up",
+      "display": "Needs field follow-up",
+      "definition": "A reviewer requested a professional visit or sample."
+    }
+  ],
+  "caseSensitive": true,
+  "experimental": true,
+  "count": 5
+}

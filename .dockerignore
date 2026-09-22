@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+tools
+build
+.git
+.env
+.playwright-mcp
+vendor

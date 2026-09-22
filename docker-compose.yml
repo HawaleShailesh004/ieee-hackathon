@@ -1,0 +1,44 @@
+# The whole demo in one command: docker compose up --build   ->   http://localhost:8090
+#   fhir-city   (A, :8081): where citizen assessments land and are reviewed; seeded with real OAH data
+#   fhir-health (B, :8082): the receiving public-health system; gets citizen evidence by exchange
+#   lane        (:8090):    lane-service API plus the web app (citizen, reviewer, health authority views)
+# The FHIR packages in fhir-packages/ are committed; rebuild them with bash scripts/build-ig.sh.
+x-hapi: &hapi
+  image: hapiproject/hapi:v8.12.0-1
+  environment:
+    SPRING_CONFIG_ADDITIONAL_LOCATION: file:///config/hapi-overrides.yaml
+  volumes:
+    - ./servers/hapi-overrides.yaml:/config/hapi-overrides.yaml:ro
+    - ./fhir-packages:/packages:ro
+  healthcheck:
+    # The image is distroless (no shell, wget or curl); it ships this Java probe of /actuator/health.
+    test: ["CMD", "java", "-cp", "/app", "HealthCheck"]
+    interval: 10s
+    timeout: 10s
+    retries: 30
+    start_period: 90s
+
+services:
+  fhir-city:
+    <<: *hapi
+    ports: ["8081:8080"]
+  fhir-health:
+    <<: *hapi
+    ports: ["8082:8080"]
+  lane:
+    build:
+      context: .
+      dockerfile: lane/Dockerfile
+    ports: ["8090:8090"]
+    env_file:
+      - path: .env        # optional: OPENAI_API_KEY etc. for "suggest answers from my note"
+        required: false
+    healthcheck:
+      # Healthy once the seed has finished and the API answers.
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8090/api/config').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    depends_on:
+      fhir-city: { condition: service_healthy }
+      fhir-health: { condition: service_healthy }

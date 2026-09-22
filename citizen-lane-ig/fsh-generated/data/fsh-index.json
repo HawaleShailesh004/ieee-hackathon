@@ -1,0 +1,66 @@
+[
+  {
+    "outputFile": "CodeSystem-citizen-provenance-activity.json",
+    "fshName": "CitizenProvenanceActivityCs",
+    "fshType": "CodeSystem",
+    "fshFile": "terminology.fsh",
+    "startLine": 28,
+    "endLine": 39
+  },
+  {
+    "outputFile": "CodeSystem-citizen-review-state.json",
+    "fshName": "CitizenReviewStateCs",
+    "fshType": "CodeSystem",
+    "fshFile": "terminology.fsh",
+    "startLine": 9,
+    "endLine": 19
+  },
+  {
+    "outputFile": "CodeSystem-oah-data-source.json",
+    "fshName": "OahDataSourceCs",
+    "fshType": "CodeSystem",
+    "fshFile": "terminology.fsh",
+    "startLine": 1,
+    "endLine": 7
+  },
+  {
+    "outputFile": "Questionnaire-CitizenStreamAssessmentOah.json",
+    "fshName": "CitizenStreamAssessmentOah",
+    "fshType": "Instance",
+    "fshFile": "questionnaire.fsh",
+    "startLine": 22,
+    "endLine": 94
+  },
+  {
+    "outputFile": "StructureDefinition-observation-citizen-oah.json",
+    "fshName": "ObservationCitizenOah",
+    "fshType": "Profile",
+    "fshFile": "profiles.fsh",
+    "startLine": 1,
+    "endLine": 26
+  },
+  {
+    "outputFile": "StructureDefinition-provenance-citizen-oah.json",
+    "fshName": "ProvenanceCitizenOah",
+    "fshType": "Profile",
+    "fshFile": "profiles.fsh",
+    "startLine": 28,
+    "endLine": 40
+  },
+  {
+    "outputFile": "ValueSet-citizen-provenance-activity-vs.json",
+    "fshName": "CitizenProvenanceActivityVs",
+    "fshType": "ValueSet",
+    "fshFile": "terminology.fsh",
+    "startLine": 41,
+    "endLine": 46
+  },
+  {
+    "outputFile": "ValueSet-citizen-review-state-vs.json",
+    "fshName": "CitizenReviewStateVs",
+    "fshType": "ValueSet",
+    "fshFile": "terminology.fsh",
+    "startLine": 21,
+    "endLine": 26
+  }
+]

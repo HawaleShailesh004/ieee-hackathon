@@ -1,0 +1,362 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "CitizenStreamAssessmentOah",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/Questionnaire/citizen-stream-assessment",
+  "title": "Urban stream check (OneAquaHealth citizen lane)",
+  "version": "0.1.0",
+  "name": "CitizenStreamAssessmentOah",
+  "status": "draft",
+  "subjectType": [
+    "Location"
+  ],
+  "description": "A short visual assessment of an urban stream reach. Each coded answer is extracted into an OAH citizen Observation.",
+  "item": [
+    {
+      "linkId": "water",
+      "text": "The water",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "foam",
+          "text": "Is there foam, unusual colour or a bad smell?",
+          "type": "choice",
+          "code": [
+            {
+              "code": "foam",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Foam/colour/smell"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "absent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Absent"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "present",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Present"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "extensive",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Extensive"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "water-temperature",
+          "text": "Water temperature, if you have a thermometer (°C)",
+          "type": "quantity",
+          "code": [
+            {
+              "code": "waterTemperature",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Water temperature"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "code": "Cel",
+                "system": "http://unitsofmeasure.org",
+                "display": "°C"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "banks",
+      "text": "Plants on the banks (how much of the bank is covered?)",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "trees",
+          "text": "Trees (taller than 3 m)",
+          "type": "choice",
+          "code": [
+            {
+              "code": "trees",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Trees (height >3m)"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "0-20-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "0-20%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "21-40-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "21-40%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "41-60-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "41-60%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "61-80-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "61-80%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "81-100-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "81-100%"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "bushes",
+          "text": "Bushes (1.5 to 3 m)",
+          "type": "choice",
+          "code": [
+            {
+              "code": "bushes",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Bushes (height (1.5-3m)"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "0-20-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "0-20%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "21-40-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "21-40%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "41-60-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "41-60%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "61-80-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "61-80%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "81-100-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "81-100%"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "herbaceous",
+          "text": "Grasses and low plants (under 1.5 m)",
+          "type": "choice",
+          "code": [
+            {
+              "code": "herbaceous",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Herbaceous (height < 1.5m)"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "0-20-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "0-20%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "21-40-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "21-40%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "41-60-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "41-60%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "61-80-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "61-80%"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "81-100-percent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "81-100%"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "in-stream",
+      "text": "In the stream",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "macrophytes",
+          "text": "Water plants growing in the stream",
+          "type": "choice",
+          "code": [
+            {
+              "code": "macrophytes",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Macrophytes"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "absent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Absent"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "present",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Present"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "extensive",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Extensive"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "invasive",
+          "text": "Plants or animals that don't belong here (invasive species)",
+          "type": "choice",
+          "code": [
+            {
+              "code": "invasiveOrganisms",
+              "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+              "display": "Invasive invertebrate, plants and fish"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "absent",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Absent"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "non-native-species",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Non-native species"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "several-non-native-species",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Several non-native species"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "unknown-non-native-species",
+                "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu",
+                "display": "Unknown non-native species"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "notes",
+      "text": "Anything else you noticed? (describe what you see, not what you think caused it)",
+      "type": "text"
+    }
+  ]
+}

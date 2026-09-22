@@ -1,0 +1,22 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "questionnaire": "https://hawaleshailesh004.github.io/ieee-hackathon/Questionnaire/citizen-stream-assessment|0.1.0",
+  "status": "completed",
+  "subject": { "reference": "Location/Loc-Almyros", "display": "Almyros Stream, Crete" },
+  "authored": "2026-09-21T09:40:00+03:00",
+  "author": { "identifier": { "system": "urn:ietf:rfc:3986", "value": "urn:uuid:5b0e7c1a-3f2d-4a8e-9b61-7f3a91c2d4e8" } },
+  "item": [
+    { "linkId": "water", "item": [
+      { "linkId": "foam", "answer": [ { "valueCoding": { "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu", "code": "extensive", "display": "Extensive" } } ] },
+      { "linkId": "water-temperature", "answer": [ { "valueQuantity": { "value": 31.5, "unit": "°C", "system": "http://unitsofmeasure.org", "code": "Cel" } } ] }
+    ] },
+    { "linkId": "banks", "item": [
+      { "linkId": "trees", "answer": [ { "valueCoding": { "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu", "code": "21-40-percent", "display": "21-40%" } } ] },
+      { "linkId": "herbaceous", "answer": [ { "valueCoding": { "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu", "code": "61-80-percent", "display": "61-80%" } } ] }
+    ] },
+    { "linkId": "in-stream", "item": [
+      { "linkId": "invasive", "answer": [ { "valueCoding": { "system": "http://hl7.eu/fhir/ig/oah/CodeSystem/temporarySystem-oah-eu", "code": "non-native-species", "display": "Non-native species" } } ] }
+    ] },
+    { "linkId": "notes", "answer": [ { "valueString": "Brown foam collecting below the road culvert, smells like sewage." } ] }
+  ]
+}

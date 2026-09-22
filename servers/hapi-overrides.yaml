@@ -1,0 +1,38 @@
+# Overrides applied on top of the HAPI FHIR JPA starter defaults (both servers use this file).
+spring:
+  datasource:
+    # In-memory: every start is a clean, reproducible demo; scripts/seed.mjs loads the OAH data.
+    url: jdbc:h2:mem:hapi
+hapi:
+  fhir:
+    fhir_version: R4
+    cors:
+      allow_Credentials: true
+      allowed_origin: ['*']
+    allow_external_references: true
+    # UUID ids so records can move between servers with the same id (exchange uses PUT).
+    server_id_strategy: UUID
+    client_id_strategy: ANY
+    # Never answer a search from cached results: review history must always be current.
+    reuse_cached_search_results_millis: 0
+    # The OAH IG and the citizen-lane IG are both status=draft; install their profiles anyway.
+    validate_resource_status_for_package_upload: false
+    implementationguides:
+      sdc:
+        name: hl7.fhir.uv.sdc
+        version: 3.0.0
+        packageUrl: https://packages.fhir.org/hl7.fhir.uv.sdc/3.0.0
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+      oah:
+        name: hl7.eu.fhir.oah
+        version: 0.1.0-ci-build
+        packageUrl: file:///packages/hl7.eu.fhir.oah-0.1.0-ci-build.tgz
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+      citizenlane:
+        name: oah.citizen-lane
+        version: 0.1.0
+        packageUrl: file:///packages/oah.citizen-lane-0.1.0.tgz
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false

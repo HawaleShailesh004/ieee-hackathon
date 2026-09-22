@@ -1,0 +1,120 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "observation-citizen-oah",
+  "url": "https://hawaleshailesh004.github.io/ieee-hackathon/StructureDefinition/observation-citizen-oah",
+  "version": "0.1.0",
+  "name": "ObservationCitizenOah",
+  "title": "Observation: OAH citizen indicator",
+  "status": "draft",
+  "description": "A citizen-science observation that conforms to the OAH indicator profile and stays distinguishable from laboratory data.\nThe parent profile fixes status to final, so review state is carried in meta.tag and Provenance rather than Observation.status.",
+  "fhirVersion": "4.0.1",
+  "kind": "resource",
+  "abstract": false,
+  "type": "Observation",
+  "baseDefinition": "http://hl7.eu/fhir/ig/oah/StructureDefinition/observation-indicators-oah",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Observation.meta.tag",
+        "path": "Observation.meta.tag",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "value",
+              "path": "system"
+            }
+          ],
+          "rules": "open"
+        },
+        "min": 1
+      },
+      {
+        "id": "Observation.meta.tag:reviewState",
+        "path": "Observation.meta.tag",
+        "sliceName": "reviewState",
+        "min": 1,
+        "max": "1",
+        "mustSupport": true,
+        "binding": {
+          "strength": "required",
+          "valueSet": "https://hawaleshailesh004.github.io/ieee-hackathon/ValueSet/citizen-review-state-vs"
+        }
+      },
+      {
+        "id": "Observation.meta.tag:reviewState.system",
+        "path": "Observation.meta.tag.system",
+        "min": 1,
+        "patternUri": "https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/citizen-review-state"
+      },
+      {
+        "id": "Observation.meta.tag:reviewState.code",
+        "path": "Observation.meta.tag.code",
+        "min": 1
+      },
+      {
+        "id": "Observation.category",
+        "path": "Observation.category",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "pattern",
+              "path": "$this"
+            }
+          ],
+          "rules": "open"
+        },
+        "min": 1
+      },
+      {
+        "id": "Observation.category:citizenScience",
+        "path": "Observation.category",
+        "sliceName": "citizenScience",
+        "min": 1,
+        "max": "1",
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "citizen-science",
+              "system": "https://hawaleshailesh004.github.io/ieee-hackathon/CodeSystem/oah-data-source"
+            }
+          ]
+        },
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.performer",
+        "path": "Observation.performer",
+        "max": "1",
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.performer.reference",
+        "path": "Observation.performer.reference",
+        "max": "0"
+      },
+      {
+        "id": "Observation.performer.identifier",
+        "path": "Observation.performer.identifier",
+        "short": "Pseudonymous contributor ID (no personal data)",
+        "min": 1,
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.derivedFrom",
+        "path": "Observation.derivedFrom",
+        "short": "The QuestionnaireResponse this observation was extracted from",
+        "min": 1,
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse"
+            ]
+          }
+        ],
+        "mustSupport": true
+      }
+    ]
+  }
+}
